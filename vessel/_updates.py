@@ -27,7 +27,9 @@ def unit(info, root, data, flush = False):
         try:
             any_(value, subdata)
         except ValueError:
-            root[name] = subdata
+            guest = field.type(subdata)
+            if not value == guest:
+                root[name] = guest
 
     for name in left:
         try:
