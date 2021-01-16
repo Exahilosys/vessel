@@ -198,7 +198,7 @@ def dict(*args, cls = DictBase, **kwargs):
 
     :param func type:
         Called with ``(data)`` for creation of new value.
-    :param func compare:
+    :param func identify:
         Called with ``(data)`` and should return respective key.
     :param type cls:
         Base class for created class.
