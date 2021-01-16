@@ -4,6 +4,8 @@
 
 #### Changes
 
+- Encountering ``None`` simply sets it unless `null=False` in `**behave`.
+
 #### Removals
 
 #### Fixes

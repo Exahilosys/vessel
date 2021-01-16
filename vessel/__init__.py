@@ -254,7 +254,8 @@ def update(*args, **kwargs):
     ``flush`` is ``False`` by default except for :func:`.list` results.
 
     ``data`` **must** be :class:`dict` for :func:`.object` results, and
-    :class:`list` otherwise.
+    :class:`list` otherwise. :func:`.object` also exposes `null=True` for
+    whether to simply set ``None`` when encountered or funnel through ``type``.
 
     .. note::
 

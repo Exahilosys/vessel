@@ -5,7 +5,7 @@ from . import _share
 __all__ = ()
 
 
-def unit(info, root, data, flush = False):
+def unit(info, root, data, flush = False, null = True):
 
     left = set(root if flush else ())
 
@@ -14,6 +14,10 @@ def unit(info, root, data, flush = False):
         try:
             field = info[name]
         except KeyError:
+            continue
+
+        if subdata is None and null:
+            root[name] = subdata
             continue
 
         left.discard(name)
