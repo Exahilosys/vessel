@@ -4,11 +4,15 @@
 
 #### Changes
 
-- Encountering ``None`` simply sets it unless `null=False` in `**behave`.
-
 #### Removals
 
 #### Fixes
+
+## 3.1.0
+
+#### Changes
+
+- Encountering ``None`` simply sets it unless `null=False` in `**behave`.
 
 ## 3.0.1
 
