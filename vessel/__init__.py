@@ -10,7 +10,7 @@ __all__ = ('Field', 'missing', 'ObjectBase', 'object', 'ListBase', 'list',
 class Field(_builds.Field):
 
     """
-    Field(type=None, make=None, name=None)
+    Field(type=None, make=None, name=None, default=missing)
 
     Describes how an :func:`.object` instance key should be handled.
 

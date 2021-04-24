@@ -2,6 +2,8 @@
 
 #### Additions
 
+- Added `Field` `default` parameter.
+
 #### Changes
 
 #### Removals

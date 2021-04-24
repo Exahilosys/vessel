@@ -72,22 +72,22 @@ def _get_data(unit):
     return data
 
 
-Field = collections.namedtuple(
-    'Field',
-    'type name make',
-    defaults = (None, None, None)
-)
-
-
 missing = type(
     'missing',
     (),
     {
         '__slots__': (),
         '__bool__': False.__bool__,
-        '__repr__': lambda self: ''
+        '__repr__': lambda self: '<missing>'
     }
 )()
+
+
+Field = collections.namedtuple(
+    'Field',
+    'type name make default',
+    defaults = (None, None, None, missing)
+)
 
 
 def build_vessel(info, identify = None, cls = object, **behave):
@@ -128,7 +128,7 @@ def build_vessel(info, identify = None, cls = object, **behave):
 
             data = context.datas[self]
 
-            value = data.get(name, missing)
+            value = data.get(name, field.default)
 
             return value
 
