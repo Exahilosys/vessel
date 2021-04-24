@@ -2,13 +2,17 @@
 
 #### Additions
 
-- Added `Field` `default` parameter.
-
 #### Changes
 
 #### Removals
 
 #### Fixes
+
+## 3.2.0
+
+#### Additions
+
+- Added `Field` `default` parameter.
 
 ## 3.1.0
 
