@@ -134,7 +134,7 @@ def list(*args, cls = ListBase, **kwargs):
     :param type cls:
         Base class for created class.
 
-    .. code-block::
+    .. code-block:: py
 
         User_compare = lambda self, data: self.id == User_identify(data)
 
