@@ -121,10 +121,10 @@ def build_vessel(info, identify = None, cls = object, **behave):
             except KeyError as error:
                 raise AttributeError(*error.args) from None
 
-            context = _share.get(self.__class__)
-
             if field.make:
                 return field.make(self)
+
+            context = _share.get(self.__class__)
 
             data = context.datas[self]
 
