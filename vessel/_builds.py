@@ -58,6 +58,7 @@ def build(create, update, identify, cls = object):
     Unit, datas = _build(create, update, identify, cls)
 
     context = _share.Context(Unit, update, datas)
+    
     _share.contexts.append(context)
 
     return Unit
