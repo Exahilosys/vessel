@@ -246,7 +246,7 @@ def update(*args, **kwargs):
 
     :param object root:
         Initial value.
-    :param dict or list data:
+    :param dict|list data:
         Stuff to update root with.
     :param bool flush:
         Whether to remove redundant entries.
