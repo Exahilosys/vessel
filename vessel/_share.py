@@ -6,7 +6,7 @@ __all__ = ()
 
 Context = collections.namedtuple(
     'Context',
-    'type update datas'
+    'type update datas add pop'
 )
 
 

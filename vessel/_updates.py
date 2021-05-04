@@ -57,7 +57,7 @@ def list_(compare, build, root, data, flush = True):
             break
         else:
             if flush:
-                del root[index]
+                del root[rindex]
             continue
         any_(value, subdata)
         del data[dindex]
@@ -66,7 +66,7 @@ def list_(compare, build, root, data, flush = True):
     root.extend(map(build, data))
 
 
-def dict_(identify, build, root, data, flush = False):
+def dict_(identify, build, root, data, flush = True):
 
     if identify is None:
         identities = list(data)

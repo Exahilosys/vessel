@@ -1,10 +1,11 @@
 
 from . import _builds
 from . import _updates
+from . import _modifies
 
 
 __all__ = ('Field', 'missing', 'ObjectBase', 'object', 'ListBase', 'list',
-           'DictBase', 'dict', 'update')
+           'DictBase', 'dict', 'update', 'add', 'pop')
 
 
 class Field(_builds.Field):
@@ -90,7 +91,7 @@ def object(*args, cls = ObjectBase, **kwargs):
 
     .. note::
 
-        When calling generated classes, the **same** instance will be returned
+        When calling generated classes, **same** instance will be returned
         for datas whose identity matches an existing one. To disable this
         behavior temporarily, use ``unique = True``. This is incosequential for
         classes generated without ``identify``.
@@ -177,7 +178,7 @@ def list(*args, cls = ListBase, **kwargs):
     Above snippet will print ``Rob#1234`` and ``Nil#5678``.
     """
 
-    return _builds.build_list(*args, cls = ListBase, **kwargs)
+    return _builds.build_list(*args, cls = cls, **kwargs)
 
 
 class DictBase:
@@ -229,7 +230,7 @@ def dict(*args, cls = DictBase, **kwargs):
         keys.
     """
 
-    return _builds.build_dict(*args, cls = DictBase, **kwargs)
+    return _builds.build_dict(*args, cls = cls, **kwargs)
 
 
 def update(*args, **kwargs):
@@ -246,12 +247,12 @@ def update(*args, **kwargs):
 
     :param object root:
         Initial value.
-    :param dict|list data:
-        Stuff to update root with.
+    :param object data:
+        Stuff to update root with. Must be :class:`dict` or :class:`list`.
     :param bool flush:
         Whether to remove redundant entries.
 
-    ``flush`` is ``False`` by default except for :func:`.list` results.
+    ``flush`` is ``True`` by default except for :func:`.object` results.
 
     ``data`` **must** be :class:`dict` for :func:`.object` results, and
     :class:`list` otherwise. :func:`.object` also exposes `null=True` for
@@ -299,3 +300,50 @@ def update(*args, **kwargs):
     """
 
     return _updates.any_(*args, **kwargs)
+
+
+def add(*args, **kwargs):
+
+    """
+    add(root, data)
+
+    Build ``data`` and add it to ``root``.
+
+    Can only be used on :func:`.list` and :func:`.dict` results.
+
+    :param object root:
+        Initial value. Must be :class:`dict` or :class:`list`.
+    :param dict data:
+        Used to build container's :class:`.object` result.
+
+    Returns ``(present, value)`` where ``present`` is :class:`bool` denoting
+    whether value already existed.
+    """
+
+    return _modifies.any_add(*args, **kwargs)
+
+
+def pop(*args, **kwargs):
+
+    """
+    pop(root, *, data=None, key=None)
+
+    Remove value against ``key``.
+
+    - For :func:`.dict`, ``key`` must be a hashable value.
+    - For :func:`.list`, ``key`` must be a :class:`int` index.
+
+    If ``key`` is not available, ``data`` should be passed for finding it.
+
+    :param object root:
+        Initial value. Must be :class:`dict` or :class:`list`.
+    :param dict data:
+        Used for finding key.
+    :param object key:
+        Used for removing respective value.
+
+    Returns ``(present, value)`` where ``present`` is :class:`bool` denoting
+    whether value already existed. Otherwise, ``value`` will be ``None``.
+    """
+
+    return _modifies.any_pop(*args, **kwargs)

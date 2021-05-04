@@ -2,11 +2,19 @@
 
 #### Additions
 
+- Added `add` and `pop`.
+- Added `copy` and `deepcopy` ability.
+
 #### Changes
+
+- `repr` is now used for inner values (instead of) `str`.
 
 #### Removals
 
 #### Fixes
+
+- Allowed `cls` for `list` and `dict`.
+- Fixed `list` updating with `flush`.
 
 ## 3.2.0
 

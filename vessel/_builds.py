@@ -1,9 +1,11 @@
 import collections
 import weakref
 import itertools
+import copy
 
 from . import _share
 from . import _updates
+from . import _modifies
 
 
 __all__ = ('Field', 'missing', 'update', 'build_vessel', 'build_list',
@@ -50,15 +52,39 @@ def _build(create, update, identify, cls):
 
             return self
 
+        def __anycopy__(self, func):
+
+            data = datas[self]
+
+            fdata = func(data)
+
+            fself = super().__new__(self.__class__)
+
+            datas[fself] = fdata
+
+            return fself
+
+        def __copy__(self):
+
+            func = lambda data: copy.copy(data)
+
+            return self.__anycopy__(func)
+
+        def __deepcopy__(self, memo):
+
+            func = lambda data: copy.deepcopy(data, memo)
+
+            return self.__anycopy__(func)
+
     return Unit, datas
 
 
-def build(create, update, identify, cls = object):
+def build(create, update, identify, add, pop, cls = object):
 
     Unit, datas = _build(create, update, identify, cls)
 
-    context = _share.Context(Unit, update, datas)
-    
+    context = _share.Context(Unit, update, datas, add, pop)
+
     _share.contexts.append(context)
 
     return Unit
@@ -86,8 +112,8 @@ missing = type(
 
 Field = collections.namedtuple(
     'Field',
-    'type name make default',
-    defaults = (None, None, None, missing)
+    'type name make default factory',
+    defaults = (None, None, None, missing, None)
 )
 
 
@@ -107,7 +133,9 @@ def build_vessel(info, identify = None, cls = object, **behave):
 
     names = {field.name: name for (name, field) in info.items() if field.name}
 
-    alias = lambda name: names.get(name, name)
+    pro_alias = lambda name: names.get(name, name)
+
+    pre_alias = lambda name: info[name].name or name
 
     class Vessel(cls):
 
@@ -115,7 +143,7 @@ def build_vessel(info, identify = None, cls = object, **behave):
 
         def __getattr__(self, name):
 
-            name = alias(name)
+            name = pro_alias(name)
 
             try:
                 field = info[name]
@@ -131,21 +159,28 @@ def build_vessel(info, identify = None, cls = object, **behave):
 
             value = data.get(name, field.default)
 
+            if value is missing and field.factory:
+                value = data[name] = field.factory()
+
             return value
 
         def __repr__(self):
 
             data = _get_data(self)
 
-            names = map(alias, data.keys())
+            names = data.keys()
+            names = map(pre_alias, names)
+
             values = data.values()
+            values = map(repr, values)
+
             items = zip(names, values)
 
             pairs = ', '.join(map('{0[0]}={0[1]}'.format, items))
 
             return '{0}({1})'.format(self.__class__.__name__, pairs)
 
-    Unit = build(create, update, identify, Vessel)
+    Unit = build(create, update, identify, None, None, Vessel)
 
     return Unit
 
@@ -197,15 +232,23 @@ def build_list(make, compare, cls = object, **behave):
 
         _updates.list_(compare, make, root, data, **kwargs)
 
+    def add(root, data):
+
+        return _modifies.list_add(compare, make, root, data)
+
+    def pop(root, data, key):
+
+        return _modifies.list_pop(compare, root, data, key)
+
     CollectionBase = _collect(cls, ())
 
-    Unit = build(create, update, None, CollectionBase)
+    Unit = build(create, update, None, add, pop, CollectionBase)
 
     class List(Unit):
 
         __slots__ = ()
 
-    return Unit
+    return List
 
 
 def build_dict(make, identify, cls = object, **behave):
@@ -222,9 +265,17 @@ def build_dict(make, identify, cls = object, **behave):
 
         _updates.dict_(identify, make, root, data, **kwargs)
 
+    def add(root, data):
+
+        return _modifies.dict_add(identify, make, root, data)
+
+    def pop(root, data = missing, key = missing):
+
+        return _modifies.dict_pop(identify, root, data, key)
+
     CollectionBase = _collect(cls, ('get', 'keys', 'values', 'items'))
 
-    Unit = build(create, update, None, CollectionBase)
+    Unit = build(create, update, None, add, pop, CollectionBase)
 
     class Dict(Unit):
 
