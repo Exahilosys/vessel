@@ -1,6 +1,15 @@
 ## Unreleased
 
 #### Additions
+#### Changes
+
+#### Removals
+
+#### Fixes
+
+## 3.3.0
+
+#### Additions
 
 - Added `add` and `pop`.
 - Added `copy` and `deepcopy` ability.
@@ -8,8 +17,6 @@
 #### Changes
 
 - `repr` is now used for inner values (instead of) `str`.
-
-#### Removals
 
 #### Fixes
 

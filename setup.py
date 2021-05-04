@@ -5,7 +5,7 @@ with open('README.rst') as file:
 
 name = 'vessel'
 
-version = '3.2.0'
+version = '3.3.0'
 
 author = 'Exahilosys'
 
