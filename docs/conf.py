@@ -8,14 +8,17 @@
 
 import sys
 import os
-import importlib.metadata
+import pkg_resources
 
 sys.path.insert(0, os.path.abspath('..'))
 
 project = 'vessel'
 author = 'Exahilosys'
 copyright = f'2023, {author}'
-release = importlib.metadata.version(project)
+
+resource = pkg_resources.get_distribution(project)
+
+release = resource.version
 
 
 extensions = [
