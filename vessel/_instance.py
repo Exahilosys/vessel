@@ -107,7 +107,7 @@ class UnitType(type):
         space.setdefault('__slots__', ())
 
         for attr_name in expose:
-            if attr_name in space:
+            if attr_name in space or any(hasattr(cls, attr_name) for cls in bases):
                 continue
             space[attr_name] = _Unit_expose(attr_name)
 
