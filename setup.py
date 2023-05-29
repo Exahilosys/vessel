@@ -1,11 +1,11 @@
 import setuptools
 
-with open('README.rst') as file:
+with open('README.rst', encoding = 'utf-8') as file:
     readme = file.read()
 
 author = 'Exahilosys'
 project = 'vessel'
-version = '4.0.0'
+version = '4.1.0'
 
 url = 'https://github.com/{0}/{1}'.format(author, project)
 

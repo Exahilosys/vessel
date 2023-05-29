@@ -3,13 +3,14 @@ import weakref
 import collections.abc
 import functools
 import copy
+import contextlib
 
 from . import _helpers
 from . import _manage
 
 
 __all__ = (
-    'Tool', 'theme', 'Unit', 'update', 
+    'Tool', 'resolve', 'theme', 'Unit', 'update', 
     'Object', 'keyify', 
     'List', 'Dict', 'add', 'pop', 
     'collect', 'Collection',
@@ -75,6 +76,17 @@ def _analyze(unit, cls = None, /):
     return info, root
 
 
+def resolve(unit):
+
+    """
+    Get the root data for a unit.
+    """
+
+    info, root = _analyze(unit)
+
+    return root
+
+
 def _Unit_expose(name):
 
     def method(self, *args, **kwargs):
@@ -95,6 +107,8 @@ class UnitType(type):
         space.setdefault('__slots__', ())
 
         for attr_name in expose:
+            if attr_name in space:
+                continue
             space[attr_name] = _Unit_expose(attr_name)
 
         self = super().__new__(cls, name, bases, space)
@@ -294,10 +308,11 @@ class ObjectType(UnitType):
     def _get_fields(cls, space):
         
         fields = {}
-        for field_name, field in space.items():
+        for field_name, field in tuple(space.items()):
             if not isinstance(field, GetField):
                 continue
             fields[field_name] = field
+            del space[field_name]
 
         return fields
 
@@ -325,11 +340,30 @@ class ObjectType(UnitType):
         return self
     
 
-def _Object_select(root, field):
+_unsafes = set()
+
+
+@contextlib.contextmanager
+def unsafe(cls):
+
+    """
+    Context managers for raising :exc:`AttributeError` instead of returning :var:`.missing`.
+    """
+
+    _unsafes.add(cls)
+
+    yield
+
+    _unsafes.discard(cls)
+    
+
+def _Object_select(name, cls, root, field):
 
     try:
         value = field.select(root)
     except KeyError:
+        if cls in _unsafes:
+            raise AttributeError(name)
         value = _manage.missing
 
     return value
@@ -372,10 +406,7 @@ class Object(Unit[_DataV], metaclass = ObjectType):
         user0 is user1 # True (identify matches)
     """
 
-    def __getattribute__(self, name):
-
-        if name.startswith('__'):
-            return object.__getattribute__(self, name)
+    def __getattr__(self, name):
 
         cls = self.__class__
 
@@ -390,7 +421,7 @@ class Object(Unit[_DataV], metaclass = ObjectType):
 
         root = info.cache_unit_to_root[self]
 
-        value = _Object_select(root, field)
+        value = _Object_select(name, cls, root, field)
         
         return value
     
@@ -402,7 +433,7 @@ class Object(Unit[_DataV], metaclass = ObjectType):
 
         pairs = []
         for name, field in meta.get_fields.items():
-            value = _Object_select(root, field)
+            value = _Object_select(name, cls, root, field)
             if value is _manage.missing:
                 continue
             pairs.append(f'{name}={repr(value)}')

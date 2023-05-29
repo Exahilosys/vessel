@@ -28,7 +28,7 @@ class Missing:
         return 0
     
     def __getattr__(self, name):
-        return _missing
+        return self
 
     def __delattr__(self, name):
         pass
@@ -39,8 +39,30 @@ class Missing:
     def __ne__(self, other):
         return True
     
+    def __lt__(self, other):
+        return False
+    
+    def __le__(self, other):
+        return False
+    
+    def __gt__(segf, other):
+        return False
+    
+    def __ge__(self, other):
+        return False
+    
     def __hash__(self):
         return id(self)
+    
+    def __add__(self, other):
+        return self
+    
+    def __sub__(self, other):
+        return self
+    
+    def __mod__(self, other):
+        return self
+        
 
 
 _missing = Missing()
