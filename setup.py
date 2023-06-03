@@ -5,7 +5,7 @@ with open('README.rst', encoding = 'utf-8') as file:
 
 author = 'Exahilosys'
 project = 'vessel'
-version = '4.1.1'
+version = '4.2.0'
 
 url = 'https://github.com/{0}/{1}'.format(author, project)
 

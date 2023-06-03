@@ -206,6 +206,14 @@ class Unit(typing.Generic[_DataV], metaclass = UnitType):
 
         return self.__copy_any__(func)
     
+    def __repr__(self):
+
+        cls = self.__class__
+
+        info, root = _analyze(self, cls)
+
+        return repr(root)
+    
 
 def _update(path, unit, data, **kwargs):
 
