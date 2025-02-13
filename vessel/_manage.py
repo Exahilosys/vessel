@@ -22,7 +22,7 @@ class Missing:
         return iter(())
     
     def __getitem__(self, name):
-        raise KeyError(name)
+        raise LookupError(name)
     
     def __len__(self):
         return 0
