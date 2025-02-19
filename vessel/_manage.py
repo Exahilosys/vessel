@@ -1,3 +1,4 @@
+import math
 
 
 __all__ = (
@@ -286,7 +287,16 @@ def _update_object(fields, path, root, data):
             return _missing
         return field.update(path, cur_sub, new_sub)
     
-    data = data.items()
+    names = tuple(fields)
+
+    def rank(item):
+        try:
+            index = names.index(item[0])
+        except ValueError:
+            index = math.inf
+        return index
+
+    data = sorted(data.items(), key = rank)
 
     return _update_dict(False, keyify, create, update, path, root, data)
 
