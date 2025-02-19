@@ -576,7 +576,7 @@ class Dict(Unit[_DataV], metaclass = DictType):
             return User(data)
         
         def keyify(path, data):
-            reutrn str(data['id\])
+            reutrn str(data['id'])
 
         class UserStore(Dict, create = create, keyify = keyify):
             pass
@@ -698,7 +698,7 @@ def collect(cls   : _ObjectV,
             name  : typing.Callable[[List | Dict], str]                               = lambda cls: f'{cls.__name__}Store') -> collections.abc.Sequence[_ObjectV] | collections.abc.Mapping[collections.abc.Hashable, _ObjectV]:
     
     """
-    Creates a collection of :class:`Object`\s based on whether keyification has been provided 
+    Creates a collection of :class:`Object`s based on whether keyification has been provided 
     (either by setting :paramref:`.SetField.unique` to :code:`True` or using :paramref:`.keyify`).
 
     :param cls:
